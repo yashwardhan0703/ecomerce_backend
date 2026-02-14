@@ -1,0 +1,44 @@
+name: Deploy Node Backend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            set -e
+
+            echo "Starting deployment..."
+
+            echo "Moving to project directory"
+            cd /home/yash/ecomerce_backend
+
+            echo "Fetching latest code"
+            git fetch origin
+
+            echo "Resetting local changes"
+            git reset --hard origin/main
+            git clean -fd
+
+            echo "Stopping existing containers"
+            docker compose down
+
+            echo "Rebuilding and starting containers"
+            docker compose up -d --build --remove-orphans
+
+            echo "Cleaning unused Docker images"
+            docker image prune -f
+
+            echo "Deployment completed successfully!"
