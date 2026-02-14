@@ -1,44 +1,74 @@
-name: Deploy Node Backend
+name: CI/CD Pipeline - Ecommerce Backend
 
 on:
   push:
     branches:
       - main
+  pull_request:
+
+permissions:
+  contents: read
 
 jobs:
-  deploy:
+
+  # -----------------------------
+  # CI JOB (GitHub Hosted)
+  # -----------------------------
+  build:
+    name: Build & Validate
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to Server via SSH
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: 22
-          script: |
-            set -e
+          node-version: 20
 
-            echo "Starting deployment..."
+      - name: Install Dependencies
+        run: npm install
 
-            echo "Moving to project directory"
-            cd /home/yash/ecomerce_backend
+      - name: Build Docker Image
+        run: docker build -t ecommerce-backend-test .
 
-            echo "Fetching latest code"
-            git fetch origin
+      - name: Docker Build Success
+        run: echo "Docker image built successfully ✅"
 
-            echo "Resetting local changes"
-            git reset --hard origin/main
-            git clean -fd
+  # -----------------------------
+  # CD JOB (Self-Hosted Runner)
+  # -----------------------------
+  deploy:
+    name: Deploy Locally via Self-Hosted Runner
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: self-hosted
 
-            echo "Stopping existing containers"
-            docker compose down
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-            echo "Rebuilding and starting containers"
-            docker compose up -d --build --remove-orphans
+      - name: Deploy with Docker
+        run: |
+          set -e
 
-            echo "Cleaning unused Docker images"
-            docker image prune -f
+          echo "🚀 Starting deployment..."
 
-            echo "Deployment completed successfully!"
+          cd /home/yash/ecomerce_backend
+
+          echo "🔄 Syncing repository"
+          git fetch origin
+          git reset --hard origin/main
+          git clean -fd
+
+          echo "🐳 Stopping containers"
+          docker compose down
+
+          echo "🔨 Rebuilding containers"
+          docker compose up -d --build --remove-orphans
+
+          echo "🧽 Cleaning unused images"
+          docker image prune -f
+
+          echo "✅ Deployment completed successfully!"
