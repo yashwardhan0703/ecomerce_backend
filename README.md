@@ -91,10 +91,15 @@ This ensures zero downtime during releases.
 
 Start initial deployment:
 
+```bash
 docker compose up -d backend_blue mongo
+```
 
 Deploy a new version:
+
+```bash
 ./deploy.sh
+```
 
 🔁 Includes automated rollback if the new deployment fails health validation.
 
