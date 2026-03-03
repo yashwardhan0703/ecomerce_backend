@@ -7,13 +7,13 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install npm
-RUN npm install
+RUN npm ci --only=production
 
 # Copy application source
 COPY . .
 
 # Expose application port
-EXPOSE 5001
+EXPOSE 5000
 
 # Start application
 CMD ["node", "server.js"]
