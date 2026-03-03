@@ -37,10 +37,9 @@ app.use('/api/newsletters', newsletterRoutes);
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'Server version 2',
+    message: 'Server version 1',
   });
 });
-
 // 404 handler
 // app.use((req, res) => {
 //   res.status(404).json({

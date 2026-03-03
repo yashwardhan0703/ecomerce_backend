@@ -63,3 +63,21 @@ This project uses a fully automated CI/CD pipeline powered by GitHub Actions.
 
 
 ---
+
+## 🧪 Zero Downtime Test
+
+![Blue Green Test](screenshots/blue-green-test.png)
+
+## 🚀 Deployment Script Output
+
+![Deploy Script](screenshots/deploy-script.png)
+
+## 🐳 Docker Containers
+
+![Docker PS](screenshots/docker-ps.png)
+
+## 🤖 CI Pipeline Success
+
+![CI Pipeline](screenshots/ci-success.png)
+
+---

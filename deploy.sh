@@ -15,14 +15,27 @@ fi
 echo "Starting $NEW_SERVICE..."
 docker compose up -d --build $NEW_SERVICE
 
-echo "Waiting 15 seconds..."
+echo "Waiting 15 seconds for startup..."
 sleep 15
 
-echo "Switching Nginx to $NEW_PORT..."
-sudo sed -i "s/server 127.0.0.1:[0-9]*/server 127.0.0.1:$NEW_PORT/" /etc/nginx/sites-available/api.conf
-sudo nginx -s reload
+echo "Checking health of new service on port $NEW_PORT..."
 
-echo "Stopping $OLD_SERVICE..."
-docker stop $OLD_SERVICE
+if curl -f http://localhost:$NEW_PORT/api/health > /dev/null 2>&1; then
+    echo "Health check passed ✅"
 
-echo "Deployment complete!"
+    echo "Switching Nginx to $NEW_PORT..."
+    sudo sed -i "s/server 127.0.0.1:[0-9]*/server 127.0.0.1:$NEW_PORT/" /etc/nginx/sites-available/api.conf
+    sudo nginx -s reload
+
+    echo "Stopping $OLD_SERVICE..."
+    docker stop $OLD_SERVICE
+
+    echo "Deployment successful 🎉"
+else
+    echo "Health check failed ❌"
+    echo "Stopping $NEW_SERVICE..."
+    docker stop $NEW_SERVICE
+
+    echo "Rollback complete. Keeping $OLD_SERVICE running."
+    exit 1
+fi
