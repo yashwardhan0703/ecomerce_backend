@@ -91,7 +91,6 @@ This ensures zero downtime during releases.
 
 Start initial deployment:
 
-```bash
 docker compose up -d backend_blue mongo
 
 Deploy a new version:
@@ -110,7 +109,6 @@ Deploy a new version:
 - Professional look
 
 ---
-```bash
 
 ## 📸 Project Screenshots
 
