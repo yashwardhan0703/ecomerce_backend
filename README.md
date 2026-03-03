@@ -1,7 +1,9 @@
-# 🛒 Ecommerce Backend API
+# 🛒 Ecommerce Backend – Dockerized Blue–Green Deployment with CI Pipeline
 
 A fully containerized Ecommerce Backend built using Node.js, Express, MongoDB, and Docker.
-This project demonstrates backend architecture, REST API structure, and Docker-based deployment.
+This project demonstrates a Dockerized Node.js backend with a production-inspired Blue–Green zero-downtime deployment strategy and CI pipeline using GitHub Actions.
+
+This project simulates production-grade DevOps deployment workflows locally, including CI automation, container image versioning, zero-downtime releases, and rollback safety mechanisms.
 
 ---
 
@@ -12,8 +14,21 @@ This project demonstrates backend architecture, REST API structure, and Docker-b
 - MongoDB
 - Mongoose
 - Docker & Docker Compose
-- Nginx (Frontend static serving)
-- JWT Authentication
+- Nginx Reverse Proxy
+- GitHub Actions
+- Docker Hub
+
+---
+
+### 🏗 Architecture Overview
+                NGINX (Reverse Proxy)
+                       |
+              -----------------------
+              |                     |
+        backend_blue           backend_green
+                     \         /
+                       MongoDB
+
 
 ---
 
@@ -35,18 +50,63 @@ This project demonstrates backend architecture, REST API structure, and Docker-b
 
 ---
 
-## 🔄 CI/CD Pipeline (GitHub Actions)
+## 🔄 CI Pipeline (GitHub Actions)
 
-This project uses a fully automated CI/CD pipeline powered by GitHub Actions.
+This project includes an automated CI pipeline using GitHub Actions.
 
-### 🚀 Deployment Flow
+### 🚀 CI Flow
 
 1. Developer pushes code to `main`
-2. GitHub Actions workflow triggers
-3. SSH connection to remote server
-4. Server pulls latest code
-5. Docker containers rebuild
-6. Application restarts automatically
+2. GitHub Actions workflow triggers automatically
+3. Docker image is built
+4. Image is tagged with:
+   - `latest`
+   - Commit SHA
+5. Image is pushed to Docker Hub
+
+This simulates a production-grade containerized release workflow.
+
+---
+
+## 🔄 Blue–Green Zero Downtime Deployment
+
+This project implements a Blue–Green deployment strategy locally using Docker Compose and Nginx.
+
+### 🏗 Deployment Strategy
+
+- Two backend containers: `backend_blue` and `backend_green`
+- Only one container serves traffic at a time
+- During deployment:
+  1. New container starts
+  2. Health validation is performed
+  3. Nginx upstream switches to new container
+  4. Old container is stopped
+- If health check fails → automatic rollback occurs
+
+This ensures zero downtime during releases.
+
+---
+
+## ▶️ How to Run Locally
+
+Start initial deployment:
+
+```bash
+docker compose up -d backend_blue mongo
+
+Deploy a new version:
+./deploy.sh
+
+This formatting looks cleaner and professional.
+
+---
+
+# 🔥 3️⃣ Add Rollback Highlight (Recruiter Attention Grabber)
+
+Add this one line under Blue-Green section:
+
+```markdown
+> 🔁 Includes automated rollback if the new deployment fails health validation.
 
 ---
 
@@ -54,15 +114,6 @@ This project uses a fully automated CI/CD pipeline powered by GitHub Actions.
 
 ### 🔹 Dockerized Backend Setup
 ![Docker Setup](./screenshots/docker.png)
-
-### 🔹 Product Controller Logic
-![Controller Logic](./screenshots/controller.png)
-
-### 🔹 MongoDB Schema Design
-![Schema Design](./screenshots/model.png)
-
-
----
 
 ## 🧪 Zero Downtime Test
 
