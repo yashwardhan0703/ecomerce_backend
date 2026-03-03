@@ -97,18 +97,20 @@ docker compose up -d backend_blue mongo
 Deploy a new version:
 ./deploy.sh
 
-This formatting looks cleaner and professional.
+🔁 Includes automated rollback if the new deployment fails health validation.
+
 
 ---
 
-# 🔥 3️⃣ Add Rollback Highlight (Recruiter Attention Grabber)
-
-Add this one line under Blue-Green section:
-
-```markdown
-> 🔁 Includes automated rollback if the new deployment fails health validation.
+✅ What this fixes:
+- Properly closed `bash` blocks
+- No broken markdown
+- No nested triple backticks
+- Clean formatting
+- Professional look
 
 ---
+```bash
 
 ## 📸 Project Screenshots
 
